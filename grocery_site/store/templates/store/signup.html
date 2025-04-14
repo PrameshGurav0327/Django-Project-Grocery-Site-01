@@ -1,0 +1,30 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="mb-4 text-center">📝 Signup</h3>
+
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+                        {{ form.as_p }}
+
+                        <div class="d-grid mt-3">
+                            <button type="submit" class="btn btn-success">Register</button>
+                        </div>
+                    </form>
+
+                    {% if form.errors %}
+                        <div class="alert alert-danger mt-3">
+                            {{ form.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

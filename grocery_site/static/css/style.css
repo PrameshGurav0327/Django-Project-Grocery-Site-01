@@ -1,0 +1,46 @@
+/* style.css - Grocery site basic styling */
+
+/* General page styles */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Navbar styles */
+.navbar {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+/* Card styles */
+.card {
+    border: none;
+    transition: transform 0.2s ease-in-out;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+    transform: scale(1.03);
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.card img {
+    border-bottom: 1px solid #ddd;
+}
+
+/* Footer styles */
+footer {
+    margin-top: 50px;
+    padding: 20px 0;
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+}

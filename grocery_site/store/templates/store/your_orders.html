@@ -1,0 +1,48 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h2 class="mb-4">🧾 Your Orders</h2>
+
+    {% if orders %}
+        {% for order in orders %}
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-success text-white d-flex justify-content-between">
+                    <strong>Order #{{ order.id }}</strong>
+                    <span>{{ order.created_at|date:"M d, Y H:i" }}</span>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th class="text-end">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.items.all %}
+                                    <tr>
+                                        <td>{{ item.product.title }}</td>
+                                        <td>{{ item.quantity }}</td>
+                                        <td class="text-end">₹{{ item.total_price }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-end mt-2">
+                        <strong>Total:</strong> ₹{{ order.total_price }}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">You have no orders yet.</div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

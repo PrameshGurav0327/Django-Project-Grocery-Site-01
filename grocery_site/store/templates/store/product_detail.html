@@ -1,0 +1,9 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<h2>{{ product.title }}</h2>
+<img src="{{ product.image.url }}" class="img-fluid" style="max-height:300px;">
+<p>{{ product.description }}</p>
+<h4>₹{{ product.price }}</h4>
+<a href="{% url 'add_to_cart' product.pk %}" class="btn btn-success">Add to Cart</a>
+{% endblock %}

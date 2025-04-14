@@ -1,0 +1,15 @@
+{% extends 'store/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Delete Address</h2>
+    <p>Are you sure you want to delete this address?</p>
+    <p><strong>{{ address.full_name }}</strong><br>
+    {{ address.street_address }}, {{ address.city }}, {{ address.state }} - {{ address.pincode }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        <a href="{% url 'address_book' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

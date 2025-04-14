@@ -1,0 +1,34 @@
+{% extends 'store/base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="mb-4">👤 Welcome, {{ user.username }}!</h3>
+
+                    <ul class="list-group list-group-flush mb-4">
+                        <li class="list-group-item">
+                            <strong>Email:</strong> {{ user.email }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Full Name:</strong> {{ user.first_name }} {{ user.last_name }}
+                        </li>
+                    </ul>
+
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary">✏️ Edit Profile</a>
+                        <a href="{% url 'your_orders' %}" class="btn btn-outline-secondary">📦 Your Orders</a>
+                        <a href="{% url 'address_book' %}" class="btn btn-outline-info">🏠 Address Book</a>
+                        <a href="{% url 'logout' %}" class="btn btn-danger mt-3">🚪 Logout</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
