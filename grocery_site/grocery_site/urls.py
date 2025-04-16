@@ -20,11 +20,18 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
 
+# Paypal
+from paypal.standard.forms import PayPalPaymentsForm
+from django.conf import settings
+import uuid
+from django.urls import reverse
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('store.urls')),
+    path('', include('paypal.standard.ipn.urls')),
 
-    # ✅ Static pages
+    # Static pages
     path('about/', TemplateView.as_view(template_name='about.html'), name='about'),
     path('contact/', TemplateView.as_view(template_name='contact.html'), name='contact'),
     path('services/', TemplateView.as_view(template_name='services.html'), name='services'),

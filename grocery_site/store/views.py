@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 
-# 🏠 Home & Product Pages
+# Home & Product Pages
 def home(request):
     products = Product.objects.all()
     return render(request, 'store/home.html', {'products': products})
@@ -18,7 +18,7 @@ def product_detail(request, pk):
     return render(request, 'store/product_detail.html', {'product': product})
 
 
-# 🛒 Cart Functions
+# Cart Functions
 @login_required
 def add_to_cart(request, pk):
     product = get_object_or_404(Product, pk=pk)
@@ -45,7 +45,7 @@ def remove_from_cart(request, pk):
     return redirect('cart')
 
 
-# ✅ Checkout & Orders
+# Checkout & Orders
 @login_required
 def checkout(request):
     cart_items = CartItem.objects.filter(user=request.user)
@@ -118,7 +118,7 @@ def delete_address(request, pk):
     return render(request, 'store/delete_address.html', {'address': address})
 
 
-# 🔐 Authentication
+# Authentication
 def signup_view(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
