@@ -2,20 +2,69 @@
 
 {% block content %}
 <div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow rounded-4">
-                <div class="card-body p-5">
-                    <h2 class="mb-4 text-center">🛍️ Our Services</h2>
-                    <ul class="list-group list-group-flush fs-5">
-                        <li class="list-group-item">🚚 Same-day delivery</li>
-                        <li class="list-group-item">🥬 Fresh and organic produce</li>
-                        <li class="list-group-item">💳 Secure online payments</li>
-                        <li class="list-group-item">🔁 Easy returns and refunds</li>
-                    </ul>
-                    <p class="mt-4 text-center text-muted">Experience a smarter way to shop for groceries.</p>
-                </div>
+    <h2 class="text-center mb-5 fw-bold">🛒 Our Services</h2>
+    <div class="row g-4">
+        <!-- Service Cards -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4 text-center p-4">
+                <div class="mb-3 fs-1 text-primary">🚚</div>
+                <h5 class="fw-bold">Same-Day Delivery</h5>
+                <p class="text-muted">Get your groceries delivered on the same day, ensuring your daily essentials are always within reach.</p>
             </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4 text-center p-4">
+                <div class="mb-3 fs-1 text-success">🥬</div>
+                <h5 class="fw-bold">Fresh & Organic Produce</h5>
+                <p class="text-muted">Our commitment to quality ensures you get the freshest and healthiest products directly to your doorstep.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4 text-center p-4">
+                <div class="mb-3 fs-1 text-info">💳</div>
+                <h5 class="fw-bold">Secure Online Payments</h5>
+                <p class="text-muted">We offer various secure payment methods, ensuring your transactions are fast and safe.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4 text-center p-4">
+                <div class="mb-3 fs-1 text-warning">🔁</div>
+                <h5 class="fw-bold">Easy Returns & Refunds</h5>
+                <p class="text-muted">We provide hassle-free returns and refunds for a stress-free shopping experience.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4 text-center p-4">
+                <div class="mb-3 fs-1 text-danger">🆘</div>
+                <h5 class="fw-bold">24/7 Helpdesk Support</h5>
+                <p class="text-muted">Our support team is available around the clock to assist with any inquiries or issues you may have.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Direct Message Section -->
+    <div class="mt-5">
+        <div class="card shadow border-0 rounded-4 p-4">
+            <h4 class="text-center mb-4 fw-bold">💬 Talk to Us Directly</h4>
+            <form method="POST" action="#">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="name" class="form-label">Your Name</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Your Email</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label">Your Message</label>
+                    <textarea id="message" name="message" class="form-control" rows="4" required></textarea>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </div>
+            </form>
+            <p class="text-center mt-3 text-muted">Our support team will get back to you via email shortly.</p>
         </div>
     </div>
 </div>

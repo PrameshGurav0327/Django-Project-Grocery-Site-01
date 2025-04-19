@@ -5,6 +5,10 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from paypal.standard.forms import PayPalPaymentsForm
+from django.conf import settings
+import uuid
+from django.urls import reverse
 
 
 # Home & Product Pages
@@ -168,3 +172,35 @@ def edit_profile(request):
     else:
         form = EditProfileForm(instance=request.user)
     return render(request, 'store/edit_profile.html', {'form': form})
+
+# ============== Paypal payment ===============
+
+@login_required
+def paypal_checkout_view(request):
+    host = request.get_host()  # Will fetch the domain site is currently hosted on.
+    final_price = 0  # Replace with the actual calculation of the final price.
+    address = None  # Replace with the actual address logic.
+
+    paypal_checkout = {
+        'business': settings.PAYPAL_RECEIVER_EMAIL,  # This is typically the email address associated with the PayPal account that will receive the payment.
+        'amount': final_price,  # The amount of money to be charged for the transaction.
+        'item_name': 'Pet',  # Describes the item being purchased.
+        'invoice': uuid.uuid4(),  # A unique identifier for the invoice. It uses uuid.uuid4() to generate a random UUID.
+        'currency_code': 'USD',
+        'notify_url': f"http://{host}{reverse('paypal-ipn')}",  # The URL where PayPal will send Instant Payment Notifications (IPN) to notify the merchant about payment-related events.
+        'return_url': f"http://{host}{reverse('paymentsuccess')}",  # The URL where the customer will be redirected after a successful payment.
+        'cancel_url': f"http://{host}{reverse('paymentfailed')}",  # The URL where the customer will be redirected if they choose to cancel the payment.
+    }
+
+    paypal_payment = PayPalPaymentsForm(initial=paypal_checkout)
+
+    # ================= Paypal Code End =====================
+
+    return render(request, 'store/checkout.html', {'cart_items': [], 'total': 0, 'final_price': final_price, 'address': address, 'paypal': paypal_payment})
+
+def payment_success(request):
+    return render(request,'core/payment_success.html')
+
+
+def payment_failed(request):
+    return render(request,'core/payment_failed.html')

@@ -114,6 +114,9 @@ USE_I18N = True
 
 USE_TZ = True
 
+PAYPAL_RECEIVER_EMAIL = 'sb-rjct840169500@business.example.com' # where cash is paid into i.e Merchant receiver mail
+PAYPAL_TEST = True
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -129,6 +132,7 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Auth Redirects
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = '/profile/'
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login/'
+
