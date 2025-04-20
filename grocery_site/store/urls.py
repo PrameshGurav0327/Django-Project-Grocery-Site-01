@@ -33,5 +33,5 @@ urlpatterns = [
     # Static Pages
     path('about/', TemplateView.as_view(template_name='store/about.html'), name='about'),
     path('contact/', TemplateView.as_view(template_name='store/contact.html'), name='contact'),
-    path('services/', TemplateView.as_view(template_name='store/services.html'), name='services'),
+    path('services/', views.services_view, name='services'),
 ]

@@ -40,9 +40,6 @@ class OrderItem(models.Model):
     def total_price(self):
         return self.product.price * self.quantity
 
-from django.db import models
-from django.contrib.auth.models import User
-
 class Address(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=100)
@@ -55,4 +52,19 @@ class Address(models.Model):
 
     def __str__(self):
         return f"{self.full_name} ({self.city})"
+    
+# Direct message feature 
+
+from django.db import models
+
+class DirectMessage(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()  # ✅ This is what stores the user's email
+    message = models.TextField()
+    sent_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Message from {self.name}"
+
+
 

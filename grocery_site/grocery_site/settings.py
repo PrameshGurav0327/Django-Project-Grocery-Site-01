@@ -136,3 +136,23 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'
 
+# =============== Direct message or email feature ================
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'prameshgurav79286.learning@gmail.com'        # 🔁 Replace with your Gmail
+EMAIL_HOST_PASSWORD = 'ahlt oowo chen bjcu'       # 🔁 Use app password (not your Gmail password)
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+#  Message has been sent notification 
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'secondary',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger',
+}
