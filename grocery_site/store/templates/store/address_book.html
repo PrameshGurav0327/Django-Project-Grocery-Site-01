@@ -6,7 +6,7 @@
         <a href="{% url 'add_address' %}" class="btn btn-success">+ Add New Address</a>
     </div>
 
-    {% if addresses %}
+    {% if addresses %}  <!-- Changed from 'address' to 'addresses' -->
         <div class="row">
             {% for address in addresses %}
                 <div class="col-md-6">

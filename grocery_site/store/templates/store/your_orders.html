@@ -19,15 +19,19 @@
                                 <tr>
                                     <th>Product</th>
                                     <th>Quantity</th>
-                                    <th class="text-end">Price</th>
+                                    <th>Unit Price</th>
+                                    <th>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for item in order.items.all %}
                                     <tr>
                                         <td>{{ item.product.title }}</td>
-                                        <td>{{ item.quantity }}</td>
-                                        <td class="text-end">₹{{ item.total_price }}</td>
+                                        <td>
+                                            <span class="mx-2">{{ item.quantity }}</span>
+                                        </td>
+                                        <td>₹{{ item.product.price }}</td>
+                                        <td>₹{{ item.total_price }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

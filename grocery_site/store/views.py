@@ -11,17 +11,14 @@ import uuid
 from django.urls import reverse
 from .forms import DirectMessageForm
 
-
 # Home & Product Pages
 def home(request):
     products = Product.objects.all()
     return render(request, 'store/home.html', {'products': products})
 
-
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
     return render(request, 'store/product_detail.html', {'product': product})
-
 
 # Cart Functions
 @login_required
@@ -34,13 +31,11 @@ def add_to_cart(request, pk):
     messages.success(request, f"{product.title} added to cart.")
     return redirect('cart')
 
-
 @login_required
 def cart_view(request):
     cart_items = CartItem.objects.filter(user=request.user)
     total = sum(item.total_price() for item in cart_items)
     return render(request, 'store/cart.html', {'cart_items': cart_items, 'total': total})
-
 
 @login_required
 def remove_from_cart(request, pk):
@@ -49,11 +44,11 @@ def remove_from_cart(request, pk):
     messages.success(request, "Item removed from cart.")
     return redirect('cart')
 
-
 # Checkout & Orders
 @login_required
 def checkout(request):
     cart_items = CartItem.objects.filter(user=request.user)
+
     if request.method == 'POST' and cart_items.exists():
         order = Order.objects.create(user=request.user)
         for item in cart_items:
@@ -63,26 +58,27 @@ def checkout(request):
         return redirect('order_success')
 
     total = sum(item.total_price() for item in cart_items)
-    return render(request, 'store/checkout.html', {'cart_items': cart_items, 'total': total})
-
+    addresses = Address.objects.filter(user=request.user)
+    return render(request, 'store/checkout.html', {
+        'cart_items': cart_items,
+        'total': total,
+        'addresses': addresses
+    })
 
 @login_required
 def order_success(request):
     return render(request, 'store/order_success.html')
-
 
 @login_required
 def your_orders(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'store/your_orders.html', {'orders': orders})
 
-
 # 🏠 Address Book
 @login_required
 def address_book(request):
     addresses = Address.objects.filter(user=request.user)
     return render(request, 'store/address_book.html', {'addresses': addresses})
-
 
 @login_required
 def add_address(request):
@@ -98,7 +94,6 @@ def add_address(request):
         form = AddressForm()
     return render(request, 'store/add_address.html', {'form': form})
 
-
 @login_required
 def edit_address(request, pk):
     address = get_object_or_404(Address, pk=pk, user=request.user)
@@ -112,7 +107,6 @@ def edit_address(request, pk):
         form = AddressForm(instance=address)
     return render(request, 'store/edit_address.html', {'form': form})
 
-
 @login_required
 def delete_address(request, pk):
     address = get_object_or_404(Address, pk=pk, user=request.user)
@@ -121,7 +115,6 @@ def delete_address(request, pk):
         messages.success(request, "Address deleted successfully.")
         return redirect('address_book')
     return render(request, 'store/delete_address.html', {'address': address})
-
 
 # Authentication
 def signup_view(request):
@@ -136,7 +129,6 @@ def signup_view(request):
         form = SignupForm()
     return render(request, 'store/signup.html', {'form': form})
 
-
 def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
@@ -149,18 +141,15 @@ def login_view(request):
         form = AuthenticationForm()
     return render(request, 'store/login.html', {'form': form})
 
-
 @login_required
 def logout_view(request):
     logout(request)
     messages.info(request, "You have been logged out.")
     return redirect('login')
 
-
 @login_required
 def profile_view(request):
     return render(request, 'store/profile.html')
-
 
 @login_required
 def edit_profile(request):
@@ -175,19 +164,13 @@ def edit_profile(request):
     return render(request, 'store/edit_profile.html', {'form': form})
 
 # ================= Direct Message feature ===================
-
 from django.core.mail import send_mail
-from django.conf import settings
-from .forms import DirectMessageForm  # Make sure to import your form
 
 def services_view(request):
     if request.method == 'POST':
         form = DirectMessageForm(request.POST)
         if form.is_valid():
-            # Save the form data into the message object
             message = form.save()
-            
-            # 📧 Send email to admin
             subject = f"New Message from {message.name}"
             body = f"""
 You have received a new message from your grocery site:
@@ -201,11 +184,10 @@ Message:
                 subject,
                 body,
                 settings.DEFAULT_FROM_EMAIL,
-                ['prameshgurav79286.learning@gmail.com'],  # 🔁 Replace with your admin email
+                ['prameshgurav79286.learning@gmail.com'],
                 fail_silently=False,
             )
 
-            # Send confirmation email to user
             user_subject = "Thanks for contacting Grocery Site"
             user_body = f"""
 Hi {message.name},
@@ -219,16 +201,14 @@ Our team will get back to you shortly.
 Regards,
 Grocery Site Team
 """
-
             send_mail(
                 user_subject,
                 user_body,
                 settings.DEFAULT_FROM_EMAIL,
-                [message.email],  # ✅ Sending email to the user's email
+                [message.email],
                 fail_silently=False,
             )
 
-            # Show success message
             messages.success(request, "✅ Your message has been sent successfully!")
             return redirect('services')
     else:
@@ -237,7 +217,6 @@ Grocery Site Team
     return render(request, 'store/services.html', {'form': form})
 
 # ============== Paypal payment ===============
-
 @login_required
 def paypal_checkout_view(request):
     host = request.get_host()
@@ -256,14 +235,30 @@ def paypal_checkout_view(request):
     }
 
     paypal_payment = PayPalPaymentsForm(initial=paypal_checkout)
-
-    # ================= Paypal Code End =====================
-
     return render(request, 'store/checkout.html', {'cart_items': [], 'total': 0, 'final_price': final_price, 'address': address, 'paypal': paypal_payment})
 
 def payment_success(request):
-    return render(request,'core/payment_success.html')
-
+    return render(request, 'store/payment_success.html')
 
 def payment_failed(request):
-    return render(request,'core/payment_failed.html')
+    return render(request, 'store/payment_failed.html')
+
+def increase_quantity(request, pk):
+    cart_item = get_object_or_404(CartItem, pk=pk)
+    cart_item.quantity += 1
+    cart_item.save()
+    return redirect('cart')
+
+def decrease_quantity(request, pk):
+    cart_item = get_object_or_404(CartItem, pk=pk)
+    if cart_item.quantity > 1:
+        cart_item.quantity -= 1
+        cart_item.save()
+    return redirect('cart')
+
+@login_required
+def manage_addresses(request):
+    addresses = Address.objects.filter(user=request.user)
+    return render(request, 'store/manage_addresses.html', {'addresses': addresses})
+
+

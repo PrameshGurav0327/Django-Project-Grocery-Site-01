@@ -11,6 +11,8 @@ urlpatterns = [
     path('add-to-cart/<int:pk>/', views.add_to_cart, name='add_to_cart'),
     path('cart/', views.cart_view, name='cart'),
     path('remove/<int:pk>/', views.remove_from_cart, name='remove_from_cart'),
+    path('increase-quantity/<int:pk>/', views.increase_quantity, name='increase_quantity'),
+    path('decrease-quantity/<int:pk>/', views.decrease_quantity, name='decrease_quantity'),
     path('checkout/', views.checkout, name='checkout'),
     path('success/', views.order_success, name='order_success'),
 
@@ -34,4 +36,6 @@ urlpatterns = [
     path('about/', TemplateView.as_view(template_name='store/about.html'), name='about'),
     path('contact/', TemplateView.as_view(template_name='store/contact.html'), name='contact'),
     path('services/', views.services_view, name='services'),
+
+    path('addresses/', views.manage_addresses, name='manage_addresses'),  # ✅ This must exist
 ]

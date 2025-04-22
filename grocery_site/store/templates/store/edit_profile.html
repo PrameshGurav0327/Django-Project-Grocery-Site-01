@@ -6,15 +6,15 @@
         {% csrf_token %}
         <div class="mb-3">
             <label for="first_name">First Name:</label>
-            <input type="text" class="form-control" name="first_name" value="{{ request.user.first_name }}">
+            <input type="text" class="form-control" name="first_name" value="{{ request.user.first_name }}" title="Enter your first name" placeholder="Enter your first name">
         </div>
         <div class="mb-3">
             <label for="last_name">Last Name:</label>
-            <input type="text" class="form-control" name="last_name" value="{{ request.user.last_name }}">
+            <input type="text" class="form-control" name="last_name" value="{{ request.user.last_name }}" title="Enter your last name" placeholder="Enter your last name">
         </div>
         <div class="mb-3">
             <label for="email">Email:</label>
-            <input type="email" class="form-control" name="email" value="{{ request.user.email }}">
+            <input type="email" class="form-control" name="email" value="{{ request.user.email }}" title="Enter your email address" placeholder="Enter your email">
         </div>
         <button type="submit" class="btn btn-primary">Save</button>
     </form>

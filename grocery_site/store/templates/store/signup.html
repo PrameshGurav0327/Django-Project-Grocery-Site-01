@@ -14,8 +14,8 @@
             
             <!-- Username Field -->
             <div class="form-floating mb-3">
-                {{ form.username }}
-                <label for="{{ form.username.id_for_label }}">Username</label>
+                <input type="text" name="username" class="form-control" id="username" placeholder="Username" value="{{ form.username.value }}">
+                <label for="username">Username</label>
                 {% if form.username.errors %}
                 <div class="invalid-feedback d-block">
                     {{ form.username.errors.0 }}
@@ -25,8 +25,8 @@
             
             <!-- Email Field -->
             <div class="form-floating mb-3">
-                {{ form.email }}
-                <label for="{{ form.email.id_for_label }}">Email Address</label>
+                <input type="email" name="email" class="form-control" id="email" placeholder="Email Address" value="{{ form.email.value }}">
+                <label for="email">Email Address</label>
                 {% if form.email.errors %}
                 <div class="invalid-feedback d-block">
                     {{ form.email.errors.0 }}
@@ -36,8 +36,8 @@
             
             <!-- Password Field -->
             <div class="form-floating mb-3">
-                {{ form.password1 }}
-                <label for="{{ form.password1.id_for_label }}">Password</label>
+                <input type="password" name="password1" class="form-control" id="password1" placeholder="Password" value="{{ form.password1.value }}">
+                <label for="password1">Password</label>
                 {% if form.password1.errors %}
                 <div class="invalid-feedback d-block">
                     {{ form.password1.errors.0 }}
@@ -47,8 +47,8 @@
             
             <!-- Confirm Password Field -->
             <div class="form-floating mb-4">
-                {{ form.password2 }}
-                <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                <input type="password" name="password2" class="form-control" id="password2" placeholder="Confirm Password" value="{{ form.password2.value }}">
+                <label for="password2">Confirm Password</label>
                 {% if form.password2.errors %}
                 <div class="invalid-feedback d-block">
                     {{ form.password2.errors.0 }}

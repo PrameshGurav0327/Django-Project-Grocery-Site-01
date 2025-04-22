@@ -1,0 +1,9 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <h2 class="text-danger">Payment Failed</h2>
+    <p>Unfortunately, your payment could not be processed. Please try again.</p>
+    <a href="{% url 'checkout' %}" class="btn btn-warning mt-3">Return to Checkout</a>
+</div>
+{% endblock %}

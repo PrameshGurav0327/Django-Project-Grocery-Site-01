@@ -114,6 +114,8 @@ USE_I18N = True
 
 USE_TZ = True
 
+# =========== Paypal ==============
+
 PAYPAL_RECEIVER_EMAIL = 'sb-rjct840169500@business.example.com' # where cash is paid into i.e Merchant receiver mail
 PAYPAL_TEST = True
 

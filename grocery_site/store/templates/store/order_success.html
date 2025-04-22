@@ -1,7 +1,19 @@
 {% extends 'store/base.html' %}
 
 {% block content %}
-<h2>✅ Order Successful!</h2>
-<p>Thank you for shopping with us. Your order has been placed.</p>
-<a href="{% url 'home' %}" class="btn btn-primary">Back to Home</a>
+<div class="container text-center mt-5">
+    <div class="card border-success mx-auto custom-card">
+        <div class="card-header bg-success text-white">
+            <h2 class="mb-0">✅ Order Successful!</h2>
+        </div>
+        <div class="card-body">
+            <p class="lead">Thank you for shopping with us.</p>
+            <p>Your order has been placed successfully.</p>
+            <div class="mt-4">
+                <a href="{% url 'home' %}" class="btn btn-primary me-2">Back to Home</a>
+                <a href="{% url 'your_orders' %}" class="btn btn-outline-success">View Your Orders</a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

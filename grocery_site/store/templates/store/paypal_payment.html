@@ -1,0 +1,20 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Complete Payment</h4>
+                </div>
+                <div class="card-body text-center">
+                    <h5>Order Total: ${{ order.total_price }}</h5>
+                    <p>You'll be redirected to PayPal to complete your payment</p>
+                    {{ form.render }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
