@@ -1,22 +1,25 @@
 {% extends 'store/base.html' %}
 
 {% block content %}
-<div class="container mt-4">
-  <div class="row">
-    
-    <!-- Left Column: Product Image -->
-    <div class="col-md-6 text-center">
-      <img src="{{ product.image.url }}" class="img-fluid product-image" alt="{{ product.title }}">
-    </div>
+<div class="container mt-5">
+  <div class="product-detail-card">
+    <div class="row">
 
-    <!-- Right Column: Product Info -->
-    <div class="col-md-6">
-      <h2>{{ product.title }}</h2>
-      <p>{{ product.description }}</p>
-      <h4>₹{{ product.price }}</h4>
-      <a href="{% url 'add_to_cart' product.pk %}" class="btn btn-success mt-3">Add to Cart</a>
-    </div>
+      <!-- Product Image -->
+      <div class="col-md-6 text-center">
+        <img src="{{ product.image.url }}" class="img-fluid product-image" alt="{{ product.title }}">
+      </div>
 
+      <!-- Product Info -->
+      <div class="col-md-6 mt-4 mt-md-0">
+        <h2>{{ product.title }}</h2>
+        <p>{{ product.description }}</p>
+        <h4>₹{{ product.price }}</h4>
+        <a href="{% url 'add_to_cart' product.pk %}" class="btn btn-success">Add to Cart</a>
+        <a href="{% url 'buynow' product.id %}" class="btn btn-warning">Buy Now</a>
+      </div>
+
+    </div>
   </div>
 </div>
 {% endblock %}

@@ -11,8 +11,8 @@ urlpatterns = [
     path('add-to-cart/<int:pk>/', views.add_to_cart, name='add_to_cart'),
     path('cart/', views.cart_view, name='cart'),
     path('remove/<int:pk>/', views.remove_from_cart, name='remove_from_cart'),
-    path('increase-quantity/<int:pk>/', views.increase_quantity, name='increase_quantity'),
-    path('decrease-quantity/<int:pk>/', views.decrease_quantity, name='decrease_quantity'),
+    path('increase-quantity/<int:item_id>/', views.increase_quantity, name='increase_quantity'),
+    path('decrease-quantity/<int:item_id>/', views.decrease_quantity, name='decrease_quantity'),
     path('checkout/', views.checkout, name='checkout'),
     path('success/', views.order_success, name='order_success'),
 
@@ -24,6 +24,11 @@ urlpatterns = [
     path('add-address/', views.add_address, name='add_address'),
     path('edit-address/<int:pk>/', views.edit_address, name='edit_address'),
     path('delete-address/<int:pk>/', views.delete_address, name='delete_address'),
+
+    # Payment
+    path('payment/',views.payment,name='payment'),
+    path('payment-success/<int:selected_address_id>/', views.payment_success, name='payment_success'),
+    path('payment-failed/', views.payment_failed, name='payment_failed'),
 
     # Authentication
     path('signup/', views.signup_view, name='signup'),
@@ -37,5 +42,6 @@ urlpatterns = [
     path('contact/', TemplateView.as_view(template_name='store/contact.html'), name='contact'),
     path('services/', views.services_view, name='services'),
 
-    path('addresses/', views.manage_addresses, name='manage_addresses'),  # ✅ This must exist
+    path('addresses/', views.manage_addresses, name='manage_addresses'),
+    path('buy-now/<int:product_id>/', views.buy_now, name='buynow'),
 ]

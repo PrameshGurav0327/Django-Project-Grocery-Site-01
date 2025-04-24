@@ -1,0 +1,13 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1>Buy Now</h1>
+  <p>Product: {{ product.title }}</p>
+  <p>Price: ₹{{ product.price }}</p>
+  <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+    {{ paypal.as_p }}
+    <button type="submit" class="btn btn-primary">Pay with PayPal</button>
+  </form>
+</div>
+{% endblock %}

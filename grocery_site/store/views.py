@@ -1,15 +1,19 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Product, CartItem, Order, OrderItem, Address
+from .models import Product, CartItem, Order, OrderItem, Address, Payment
 from .forms import AddressForm, SignupForm, EditProfileForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from .forms import DirectMessageForm
+
+
+# Paypal Payment 
+
 from paypal.standard.forms import PayPalPaymentsForm
 from django.conf import settings
 import uuid
 from django.urls import reverse
-from .forms import DirectMessageForm
 
 # Home & Product Pages
 def home(request):
@@ -48,22 +52,68 @@ def remove_from_cart(request, pk):
 @login_required
 def checkout(request):
     cart_items = CartItem.objects.filter(user=request.user)
-
-    if request.method == 'POST' and cart_items.exists():
-        order = Order.objects.create(user=request.user)
-        for item in cart_items:
-            OrderItem.objects.create(order=order, product=item.product, quantity=item.quantity)
-        cart_items.delete()
-        messages.success(request, "Order placed successfully.")
-        return redirect('order_success')
-
     total = sum(item.total_price() for item in cart_items)
     addresses = Address.objects.filter(user=request.user)
-    return render(request, 'store/checkout.html', {
-        'cart_items': cart_items,
-        'total': total,
-        'addresses': addresses
-    })
+
+    if request.method == 'POST':
+        selected_address_id = request.POST.get('address_id')
+        if not selected_address_id:
+            messages.error(request, "Please select a delivery address.")
+            return redirect('checkout')
+
+        paypal_dict = {
+            'business': settings.PAYPAL_RECEIVER_EMAIL,
+            'amount': total,
+            'item_name': 'Order',
+            'invoice': str(uuid.uuid4()),
+            'currency_code': 'USD',
+            'notify_url': request.build_absolute_uri(reverse('paypal-ipn')),
+            'return_url': request.build_absolute_uri(reverse('payment_success', args=[selected_address_id])),
+            'cancel_return': request.build_absolute_uri(reverse('payment_failed')),
+        }
+        form = PayPalPaymentsForm(initial=paypal_dict)
+        return render(request, 'store/checkout.html', {'paypal': form, 'total': total, 'addresses': addresses})
+
+    return render(request, 'store/checkout.html', {'cart_items': cart_items, 'total': total, 'addresses': addresses})
+
+
+@login_required
+def payment_success(request, selected_address_id):
+    user = request.user
+    address = get_object_or_404(Address, pk=selected_address_id, user=user)
+    cart_items = CartItem.objects.filter(user=user)
+
+    if not cart_items.exists():
+        messages.error(request, "Your cart is empty.")
+        return redirect('cart')
+
+    # Create an order and order items
+    order = Order.objects.create(user=user, address=address)
+    for cart_item in cart_items:
+        OrderItem.objects.create(
+            order=order,
+            product=cart_item.product,
+            quantity=cart_item.quantity
+        )
+        cart_item.delete()
+
+    # Create a payment record
+    Payment.objects.create(
+        user=user,
+        order=order,
+        amount=order.total_price(),
+        status='Completed',
+        payment_id=request.GET.get('paymentId', '')
+    )
+
+    messages.success(request, "Payment successful! Your order has been placed.")
+    return render(request, 'store/payment_success.html', {'order': order})
+
+
+@login_required
+def payment_failed(request):
+    messages.error(request, "Payment failed. Please try again.")
+    return render(request, 'store/payment_failed.html')
 
 @login_required
 def order_success(request):
@@ -216,49 +266,99 @@ Grocery Site Team
 
     return render(request, 'store/services.html', {'form': form})
 
-# ============== Paypal payment ===============
+# increase_quantity attribute
+
 @login_required
-def paypal_checkout_view(request):
-    host = request.get_host()
-    final_price = 0
-    address = None
+def increase_quantity(request, item_id):
+    item = get_object_or_404(CartItem, id=item_id, user=request.user)
+    item.quantity += 1
+    item.save()
+    return redirect('cart')  # Ensure this matches your cart page's URL name
 
-    paypal_checkout = {
-        'business': settings.PAYPAL_RECEIVER_EMAIL,
-        'amount': final_price,
-        'item_name': 'Pet',
-        'invoice': uuid.uuid4(),
-        'currency_code': 'USD',
-        'notify_url': f"http://{host}{reverse('paypal-ipn')}",
-        'return_url': f"http://{host}{reverse('paymentsuccess')}",
-        'cancel_url': f"http://{host}{reverse('paymentfailed')}",
-    }
+# increase_quantity attribute
 
-    paypal_payment = PayPalPaymentsForm(initial=paypal_checkout)
-    return render(request, 'store/checkout.html', {'cart_items': [], 'total': 0, 'final_price': final_price, 'address': address, 'paypal': paypal_payment})
+@login_required
+def decrease_quantity(request, item_id):
+    item = get_object_or_404(CartItem, id=item_id, user=request.user)
+    if item.quantity > 1:
+        item.quantity -= 1
+        item.save()
+    else:
+        item.delete()  # Optional: remove item if quantity reaches 0
+    return redirect('cart')  # Ensure this matches your cart page's URL name
+
+
+# paypal payment functions
 
 def payment_success(request):
     return render(request, 'store/payment_success.html')
 
+
 def payment_failed(request):
     return render(request, 'store/payment_failed.html')
 
-def increase_quantity(request, pk):
-    cart_item = get_object_or_404(CartItem, pk=pk)
-    cart_item.quantity += 1
-    cart_item.save()
-    return redirect('cart')
+def payment(request):
+    if request.method=='POST':
+        selected_address_id = request.POST.get('selected_address')
+        print(selected_address_id)
 
-def decrease_quantity(request, pk):
-    cart_item = get_object_or_404(CartItem, pk=pk)
-    if cart_item.quantity > 1:
-        cart_item.quantity -= 1
-        cart_item.save()
-    return redirect('cart')
+    cart_items = CartItem.objects.filter(user=request.user)      # cart_items will fetch product of current user, and show product available in the cart of the current user.
+    total =0
+    delhivery_charge =2000
+    for item in cart_items:
+        item.product.price = item.product.price * item.quantity
+        total += item.product.price
+    final_price= delhivery_charge + total
+    
+    address = Address.objects.filter(user=request.user)
+  
+        #============== Paypal Code =====================
+   
+    host = request.get_host()   # Will fecth the domain site is currently hosted on.
+   
+    paypal_checkout = {
+        'business': settings.PAYPAL_RECEIVER_EMAIL,   #This is typically the email address associated with the PayPal account that will receive the payment.
+        'amount': final_price,    #: The amount of money to be charged for the transaction. 
+        'item_name': 'Veggy',       # Describes the item being purchased.
+        'invoice': uuid.uuid4(),  #A unique identifier for the invoice. It uses uuid.uuid4() to generate a random UUID.
+        'currency_code': 'USD',
+        'notify_url': f"http://{host}{reverse('paypal-ipn')}",         #The URL where PayPal will send Instant Payment Notifications (IPN) to notify the merchant about payment-related events
+        'return_url': f"http://{host}{reverse('payment_success',args=[selected_address_id])}",     #The URL where the customer will be redirected after a successful payment. 
+        'cancel_url': f"http://{host}{reverse('payment_failed')}",      #The URL where the customer will be redirected if they choose to cancel the payment. 
+    }
+
+    paypal_payment = PayPalPaymentsForm(initial=paypal_checkout)
+
+        #=============== Paypal Code  End =====================
+    # Render a payment page or handle payment logic
+    return render(request, 'store/payment.html')
+
+from django.contrib.auth.decorators import login_required
 
 @login_required
 def manage_addresses(request):
     addresses = Address.objects.filter(user=request.user)
     return render(request, 'store/manage_addresses.html', {'addresses': addresses})
+
+@login_required
+def buy_now(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    total = product.price
+
+    # PayPal payment setup
+    host = request.get_host()
+    paypal_dict = {
+        'business': settings.PAYPAL_RECEIVER_EMAIL,
+        'amount': total,
+        'item_name': product.title,
+        'invoice': str(uuid.uuid4()),
+        'currency_code': 'USD',
+        'notify_url': f"http://{host}{reverse('paypal-ipn')}",
+        'return_url': f"http://{host}{reverse('payment_success', args=[1])}",  # Replace '1' with the address ID if needed
+        'cancel_return': f"http://{host}{reverse('payment_failed')}",
+    }
+
+    form = PayPalPaymentsForm(initial=paypal_dict)
+    return render(request, 'store/buy_now.html', {'paypal': form, 'product': product})
 
 

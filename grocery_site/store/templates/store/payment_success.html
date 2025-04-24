@@ -2,8 +2,8 @@
 
 {% block content %}
 <div class="container text-center mt-5">
-    <h2 class="text-success">Payment Successful!</h2>
-    <p>Thank you for your order. Your payment has been received.</p>
-    <a href="{% url 'storehome' %}" class="btn btn-primary mt-3">Back to Home</a>
+    <h1>Payment Successful</h1>
+    <p>Your order has been placed successfully!</p>
+    <a href="{% url 'your_orders' %}">View Your Orders</a>
 </div>
 {% endblock %}
