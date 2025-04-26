@@ -27,6 +27,8 @@ urlpatterns = [
 
     # Payment
     path('payment/',views.payment,name='payment'),
+    # store/urls.py
+
     path('payment-success/<int:selected_address_id>/', views.payment_success, name='payment_success'),
     path('payment-failed/', views.payment_failed, name='payment_failed'),
 

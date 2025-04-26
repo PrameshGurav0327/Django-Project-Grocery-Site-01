@@ -1,13 +1,14 @@
 {% extends 'store/base.html' %}
-
 {% block content %}
+
 <div class="container mt-4">
-  <h1>Buy Now</h1>
-  <p>Product: {{ product.title }}</p>
-  <p>Price: ₹{{ product.price }}</p>
-  <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
-    {{ paypal.as_p }}
-    <button type="submit" class="btn btn-primary">Pay with PayPal</button>
-  </form>
+    <h2 class="mb-4">Payment</h2>
+    <p>You are paying ₹{{ final_price }} for {{ cart_items|length }} item(s).</p>
+
+    <div class="card p-4">
+        <h5>Proceed with PayPal:</h5>
+        {{ paypal_payment.render }}
+    </div>
 </div>
+
 {% endblock %}

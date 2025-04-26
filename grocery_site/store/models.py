@@ -59,7 +59,7 @@ from django.db import models
 
 class DirectMessage(models.Model):
     name = models.CharField(max_length=100)
-    email = models.EmailField()  # ✅ This is what stores the user's email
+    email = models.EmailField()  # This is what stores the user's email
     message = models.TextField()
     sent_at = models.DateTimeField(auto_now_add=True)
 

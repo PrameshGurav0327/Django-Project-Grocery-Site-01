@@ -79,35 +79,34 @@ def checkout(request):
 
 @login_required
 def payment_success(request, selected_address_id):
-    user = request.user
-    address = get_object_or_404(Address, pk=selected_address_id, user=user)
-    cart_items = CartItem.objects.filter(user=user)
+    # Cart items ko get karna
+    cart_items = CartItem.objects.filter(user=request.user)
 
-    if not cart_items.exists():
-        messages.error(request, "Your cart is empty.")
-        return redirect('cart')
+    # Agar cart mein items hain to order banayein
+    if cart_items.exists():
+        # Step 1: Naya Order create karna
+        order = Order.objects.create(user=request.user)
 
-    # Create an order and order items
-    order = Order.objects.create(user=user, address=address)
-    for cart_item in cart_items:
-        OrderItem.objects.create(
-            order=order,
-            product=cart_item.product,
-            quantity=cart_item.quantity
-        )
-        cart_item.delete()
+        # Step 2: Cart items ko OrderItem mein convert karna
+        for item in cart_items:
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity
+            )
 
-    # Create a payment record
-    Payment.objects.create(
-        user=user,
-        order=order,
-        amount=order.total_price(),
-        status='Completed',
-        payment_id=request.GET.get('paymentId', '')
-    )
+        # Step 3: Cart ko empty kar dena
+        cart_items.delete()
 
-    messages.success(request, "Payment successful! Your order has been placed.")
-    return render(request, 'store/payment_success.html', {'order': order})
+        # Order confirmation ka message
+        messages.success(request, "Payment successful and your order is placed!")
+    else:
+        # Agar cart empty ho, to error message dena
+        messages.error(request, "No items found in cart.")
+
+    # Selected address ko pass karte hue success page dikhana
+    return render(request, 'store/payment_success.html', {'address_id': selected_address_id})
+
 
 
 @login_required
@@ -223,7 +222,7 @@ def services_view(request):
             message = form.save()
             subject = f"New Message from {message.name}"
             body = f"""
-You have received a new message from your grocery site:
+You have received a new message from your Nexus:
 
 Name: {message.name}
 Email: {message.email}
@@ -234,11 +233,11 @@ Message:
                 subject,
                 body,
                 settings.DEFAULT_FROM_EMAIL,
-                ['prameshgurav79286.learning@gmail.com'],
+                ['prameshgurav79286@gmail.com'],  # Admin email
                 fail_silently=False,
             )
 
-            user_subject = "Thanks for contacting Grocery Site"
+            user_subject = "Thanks for contacting Nexus"
             user_body = f"""
 Hi {message.name},
 
@@ -249,13 +248,13 @@ Thank you for reaching out to us! We have received your message:
 Our team will get back to you shortly.
 
 Regards,
-Grocery Site Team
+Nexus Team
 """
             send_mail(
                 user_subject,
                 user_body,
                 settings.DEFAULT_FROM_EMAIL,
-                [message.email],
+                [message.email],  # User's email
                 fail_silently=False,
             )
 
@@ -290,50 +289,54 @@ def decrease_quantity(request, item_id):
 
 # paypal payment functions
 
-def payment_success(request):
-    return render(request, 'store/payment_success.html')
+# def payment_success(request, selected_address_id):
+#     return render(request, 'store/payment_success.html', {'address_id': selected_address_id})
 
 
-def payment_failed(request):
-    return render(request, 'store/payment_failed.html')
+# def payment_failed(request):
+#     return render(request, 'store/payment_failed.html')
 
 def payment(request):
-    if request.method=='POST':
+    if request.method == 'POST':
         selected_address_id = request.POST.get('selected_address')
         print(selected_address_id)
 
-    cart_items = CartItem.objects.filter(user=request.user)      # cart_items will fetch product of current user, and show product available in the cart of the current user.
-    total =0
-    delhivery_charge =2000
-    for item in cart_items:
-        item.product.price = item.product.price * item.quantity
-        total += item.product.price
-    final_price= delhivery_charge + total
-    
-    address = Address.objects.filter(user=request.user)
-  
-        #============== Paypal Code =====================
-   
-    host = request.get_host()   # Will fecth the domain site is currently hosted on.
-   
-    paypal_checkout = {
-        'business': settings.PAYPAL_RECEIVER_EMAIL,   #This is typically the email address associated with the PayPal account that will receive the payment.
-        'amount': final_price,    #: The amount of money to be charged for the transaction. 
-        'item_name': 'Veggy',       # Describes the item being purchased.
-        'invoice': uuid.uuid4(),  #A unique identifier for the invoice. It uses uuid.uuid4() to generate a random UUID.
-        'currency_code': 'USD',
-        'notify_url': f"http://{host}{reverse('paypal-ipn')}",         #The URL where PayPal will send Instant Payment Notifications (IPN) to notify the merchant about payment-related events
-        'return_url': f"http://{host}{reverse('payment_success',args=[selected_address_id])}",     #The URL where the customer will be redirected after a successful payment. 
-        'cancel_url': f"http://{host}{reverse('payment_failed')}",      #The URL where the customer will be redirected if they choose to cancel the payment. 
-    }
+        cart_items = CartItem.objects.filter(user=request.user)
+        total = 0
+        for item in cart_items:
+            item_total_price = item.product.price * item.quantity
+            total += item_total_price
+        final_price = total
 
-    paypal_payment = PayPalPaymentsForm(initial=paypal_checkout)
+        address = Address.objects.filter(user=request.user)
 
-        #=============== Paypal Code  End =====================
-    # Render a payment page or handle payment logic
+        # PayPal Code
+        host = request.get_host()
+        paypal_checkout = {
+            'business': settings.PAYPAL_RECEIVER_EMAIL,
+            'amount': final_price,
+            'item_name': 'Veggy',
+            'invoice': uuid.uuid4(),
+            'currency_code': 'USD',
+            'notify_url': f"http://{host}{reverse('paypal-ipn')}",
+            'return_url': f"http://{host}{reverse('payment_success', args=[selected_address_id])}",
+            'cancel_url': f"http://{host}{reverse('payment_failed')}",
+        }
+        paypal_payment = PayPalPaymentsForm(initial=paypal_checkout)
+
+        context = {
+            'paypal_payment': paypal_payment,
+            'final_price': final_price,
+            'cart_items': cart_items,
+            'address': address,
+        }
+        return render(request, 'store/payment.html', context)
+
+    else:
+        return redirect('checkout')
+
+
     return render(request, 'store/payment.html')
-
-from django.contrib.auth.decorators import login_required
 
 @login_required
 def manage_addresses(request):
