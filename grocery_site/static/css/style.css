@@ -4,6 +4,8 @@
 body {
     background-color: #ffffff;
     font-family: 'Segoe UI', sans-serif;
+    justify-content: center;
+    align-items: center;
     margin: 0;
     padding: 0;
 }
@@ -197,6 +199,90 @@ h2.mb-4.text-center {
     background-color: #218838;
     transform: translateY(-2px);
 }
+
+/* Container for the auth form */
+.auth-form-container {
+    margin-left: 350px;
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+}
+
+/* Card styling */
+.auth-form-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 30px 25px;
+    text-align: center;
+}
+
+/* Heading */
+.auth-form-card h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #343a40;
+}
+
+/* Form fields styled as <p> from Django form.as_p */
+.auth-form-card form p {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+/* Input fields */
+.auth-form-card input[type="text"],
+.auth-form-card input[type="password"],
+.auth-form-card input[type="email"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    outline: none;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.auth-form-card input:focus {
+    border-color: #007bff;
+}
+
+/* Submit Button */
+.auth-form-card .btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.auth-form-card .btn:hover {
+    background-color: #0056b3;
+}
+
+/* Bottom text */
+.auth-form-card .text-center {
+    margin-top: 20px;
+}
+
+.auth-form-card .text-muted {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.auth-form-card a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.auth-form-card a:hover {
+    text-decoration: underline;
+}
+
 
 /* Responsive Design */
 @media (max-width: 768px) {

@@ -79,15 +79,11 @@ def checkout(request):
 
 @login_required
 def payment_success(request, selected_address_id):
-    # Cart items ko get karna
     cart_items = CartItem.objects.filter(user=request.user)
-
-    # Agar cart mein items hain to order banayein
     if cart_items.exists():
-        # Step 1: Naya Order create karna
         order = Order.objects.create(user=request.user)
 
-        # Step 2: Cart items ko OrderItem mein convert karna
+        # Cart items ko OrderItem mein convert
         for item in cart_items:
             OrderItem.objects.create(
                 order=order,
@@ -95,16 +91,12 @@ def payment_success(request, selected_address_id):
                 quantity=item.quantity
             )
 
-        # Step 3: Cart ko empty kar dena
+        # Cart ko empty kar dena
         cart_items.delete()
-
-        # Order confirmation ka message
+        # Order confirmation message
         messages.success(request, "Payment successful and your order is placed!")
     else:
-        # Agar cart empty ho, to error message dena
         messages.error(request, "No items found in cart.")
-
-    # Selected address ko pass karte hue success page dikhana
     return render(request, 'store/payment_success.html', {'address_id': selected_address_id})
 
 
@@ -283,18 +275,8 @@ def decrease_quantity(request, item_id):
         item.quantity -= 1
         item.save()
     else:
-        item.delete()  # Optional: remove item if quantity reaches 0
-    return redirect('cart')  # Ensure this matches your cart page's URL name
-
-
-# paypal payment functions
-
-# def payment_success(request, selected_address_id):
-#     return render(request, 'store/payment_success.html', {'address_id': selected_address_id})
-
-
-# def payment_failed(request):
-#     return render(request, 'store/payment_failed.html')
+        item.delete()
+    return redirect('cart')
 
 def payment(request):
     if request.method == 'POST':
@@ -335,9 +317,6 @@ def payment(request):
     else:
         return redirect('checkout')
 
-
-    return render(request, 'store/payment.html')
-
 @login_required
 def manage_addresses(request):
     addresses = Address.objects.filter(user=request.user)
@@ -357,7 +336,7 @@ def buy_now(request, product_id):
         'invoice': str(uuid.uuid4()),
         'currency_code': 'USD',
         'notify_url': f"http://{host}{reverse('paypal-ipn')}",
-        'return_url': f"http://{host}{reverse('payment_success', args=[1])}",  # Replace '1' with the address ID if needed
+        'return_url': f"http://{host}{reverse('payment_success', args=[1])}",
         'cancel_return': f"http://{host}{reverse('payment_failed')}",
     }
 

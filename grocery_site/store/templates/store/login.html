@@ -1,4 +1,5 @@
 {% extends 'store/base.html' %}
+
 {% block content %}
 <div class="auth-form-container">
     <div class="auth-form-card">
@@ -7,6 +8,11 @@
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit" class="btn btn-primary">Login</button>
+            <div class="text-center mt-3">
+                <p class="text-muted">Don't have an account? 
+                    <a href="{% url 'signup' %}" class="text-decoration-none fw-bold">Register Here</a>
+                </p>
+            </div>
         </form>
     </div>
 </div>

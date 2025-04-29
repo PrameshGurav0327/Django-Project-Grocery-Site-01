@@ -4,7 +4,7 @@
 <div class="container py-5">
     <h2 class="text-center mb-5 fw-bold">🛒 Our Services</h2>
 
-    <!-- ✅ Django Success Message Alert -->
+    <!-- Django Success Message Alert -->
     {% if messages %}
       {% for message in messages %}
         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -28,6 +28,13 @@
                 <div class="mb-3 fs-1 text-success">🥬</div>
                 <h5 class="fw-bold">Fresh & Organic Produce</h5>
                 <p class="text-muted">Our commitment to quality ensures you get the freshest and healthiest products directly to your doorstep.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4 text-center p-4">
+                <div class="mb-3 fs-1 text-success">🛍️</div>
+                <h5 class="fw-bold">Delivers all types of products</h5>
+                <p class="text-muted">Our commitment to quality ensures you get the best quality products.</p>
             </div>
         </div>
         <div class="col-md-6 col-lg-4">
